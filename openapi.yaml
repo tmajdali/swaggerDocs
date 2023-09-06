@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Efada Hospitals API
+  description: |-
+   Free and public API by Efada; to be used by anyone interested in hospitals in KSA.
+    
+    Some useful links:
+    - [Efada Website](https://www.efada.com.sa/)
+  termsOfService: http://sample.com
+  contact:
+    email: tmajdali@elm.sa
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://efada/api/v1
+tags:
+  - name: Hospitals
+    description: Everything about hospitals in KSA!
+    externalDocs:
+      description: Find out more about
+      url: https://www.efada.com.sa/
+paths:
+  /hospital:
+    get:
+      tags:
+        - hospital
+      summary: Get a list of all hospitals
+      description: Get a list of all hospitals
+      operationId: getHospitals
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Hospital'               
+        '500':
+          description: Internal Server Error
+      security:
+        - api_key: []
+    post:
+      tags:
+        - hospital
+      summary: Add a new hospital
+      description: Add a new hospital to Efada
+      operationId: addHospital
+      requestBody:
+        description: Create a new hospital in Efada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HospitalAdd'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'          
+        '405':
+          description: Invalid input
+        '500':
+          description: Internal Server Error
+  /hospital/{hospitalId}:
+    get:
+      tags:
+        - hospital
+      summary: Find hospital by ID
+      description: Returns a single hospital
+      operationId: getHospitalById
+      parameters:
+        - name: hospitalId
+          in: path
+          description: ID of hospital to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hospital'          
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hospital not found
+        '500':
+          description: Internal Server Error
+      security:
+        - api_key: []
+components:
+  schemas:
+    Success:
+      type: object
+      properties:
+        Message:
+          type: string
+          example: Hospital was added successfully
+        hospitalId:
+          type: integer
+          format: int64
+          example: 905
+    Contact:
+      type: object
+      properties:
+        mobile:
+          type: string
+          example: '0506698945'
+        phone:
+          type: string
+          example: '016734654'
+    Hospital:
+      required:
+        - name
+        - region
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 814
+        name:
+          type: string
+          example: King Saud Hospital
+        contact:
+          $ref: '#/components/schemas/Contact'
+        region:
+          type: string
+          description: pet status in the store
+          enum:
+            - Riyadh Region
+            - Eastern Region
+            - Tabuk
+      xml:
+        name: hospital
+    HospitalAdd:
+      required:
+        - name
+        - region
+      type: object
+      properties:
+        name:
+          type: string
+          example: King Saud Hospital
+        contact:
+          $ref: '#/components/schemas/Contact'
+        region:
+          type: string
+          description: pet status in the store
+          enum:
+            - Riyadh Region
+            - Eastern Region
+            - Tabuk
+      xml:
+        name: hospitalAdd
+  requestBodies:
+    HospitalArray:
+      description: List of Hospital object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Hospital'
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
