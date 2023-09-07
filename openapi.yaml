@@ -66,6 +66,30 @@ paths:
           description: Invalid input
         '500':
           description: Internal Server Error
+    put:
+      tags:
+        - hospital
+      summary: Update a hospital
+      description: Update a hospital in Efada
+      operationId: updateHospital
+      requestBody:
+        description: Update a hospital in Efada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Hospital'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'          
+        '405':
+          description: Invalid input
+        '500':
+          description: Internal Server Error
   /hospital/{hospitalId}:
     get:
       tags:
@@ -103,11 +127,11 @@ components:
       properties:
         message:
           type: string
-          example: Hospital was added successfully
+          example: success
         hospitalId:
           type: integer
           format: int64
-          example: 905
+          example: 814
     Contact:
       type: object
       properties:
@@ -154,7 +178,7 @@ components:
           $ref: '#/components/schemas/Contact'
         region:
           type: string
-          description: pet status in the store
+          description: region
           enum:
             - Riyadh Region
             - Eastern Region
