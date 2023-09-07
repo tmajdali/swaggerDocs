@@ -61,7 +61,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Success'          
+                $ref: '#/components/schemas/SuccessResponse'          
         '405':
           description: Invalid input
         '500':
@@ -98,7 +98,7 @@ paths:
         - api_key: []
 components:
   schemas:
-    Success:
+    SuccessResponse:
       type: object
       properties:
         Message:
