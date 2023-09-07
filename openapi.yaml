@@ -101,7 +101,7 @@ components:
     SuccessResponse:
       type: object
       properties:
-        Message:
+        message:
           type: string
           example: Hospital was added successfully
         hospitalId:
