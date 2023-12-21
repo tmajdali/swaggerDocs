@@ -86,6 +86,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cities'
+  /api/saudi-geo-data/cities/{region-id}:
+     get:
+      summary: Get All Saudi Arabia Cities by Region ID
+      description: Get All Saudi Arabia Cities by Region ID
+      operationId: id3
+      parameters:
+        - name: region-id
+          in: path
+          description: region id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: sample
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, immutable, max-age=31556926
+            Connection:
+              schema:
+                type: string
+                example: Keep-Alive
+            Date:
+              schema:
+                type: string
+                example: Thu, 19 Oct 2023 09:06:23 GMT
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5, max=100
+            Server:
+              schema:
+                type: string
+                example: Apache/2.4.38 (Debian)
+            content-encoding:
+              schema:
+                type: string
+                example: gzip
+            content-length:
+              schema:
+                type: string
+                example: '1593'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cities'              
   /api/saudi-geo-data/districts:
     get:
       summary: Get All Saudi Arabia Disticts
@@ -125,7 +173,55 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Districts'              
+                $ref: '#/components/schemas/Districts'
+  /api/saudi-geo-data/districts/{city-id}:
+    get:
+      summary: Get All Saudi Arabia Disticts by City ID
+      description: Get All Saudi Arabia Districts by City ID
+      operationId: id5
+      parameters:
+        - name: city-id
+          in: path
+          description: city id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: sample
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, immutable, max-age=31556926
+            Connection:
+              schema:
+                type: string
+                example: Keep-Alive
+            Date:
+              schema:
+                type: string
+                example: Thu, 19 Oct 2023 09:06:23 GMT
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5, max=100
+            Server:
+              schema:
+                type: string
+                example: Apache/2.4.38 (Debian)
+            content-encoding:
+              schema:
+                type: string
+                example: gzip
+            content-length:
+              schema:
+                type: string
+                example: '1593'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Districts'                
   /api/saudi-geo-data/regions/{id}:
      get:
       summary: Get Saudi Region By ID
@@ -226,7 +322,7 @@ paths:
      get:
       summary: Get Saudi District By ID
       description: Get Saudi District By ID
-      operationId: id3
+      operationId: id4
       parameters:
         - name: id
           in: path
