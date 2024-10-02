@@ -22,18 +22,17 @@ paths:
       summary: Generate and send an OTP to the end user's phone number.
       description: Generates an OTP and sends it to the end user's phone number associated with the provided National ID.
       operationId: sendOtp
-      parameters:
-        - name: nationalId
-          in: query
-          required: true
-          description: Individual's National ID number (Ahwal/Iqama).
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendOtpRequest'
       responses:
         204:
           description: OTP generated and sent successfully.
         400:
-          description: Invalid national Id.
+          description: Invalid individual Id.
           content:
             application/json:
               schema:
@@ -51,11 +50,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
 
-  /individual/verfiy:
+  /individual/verify:
     post:
       tags:
         - Individual
-      summary: Retrieve an individual's personal information based on National ID and birthdate.
+      summary: Retrieve an individual's personal information based on Individual ID and birthdate.
       description: Fetches personal information of a Saudi citizen or resident after verifying the requester's identity and authorization. Accepts Hijri date format if the ID number starts with '1' (citizen) or Gregorian date format if it starts with '2' (resident).
       operationId: getIndividualInfo
       requestBody:
@@ -162,7 +161,7 @@ paths:
         - Organization
       operationId: verifyDelegatedSigner
       summary: Verify relationship between a organization and a delegated signer.
-      description: Verifies whether an individual is registered as a delegated signer within a organization based on the provided national ID, CR number, and Chamber of Commerce.
+      description: Verifies whether an individual is registered as a delegated signer within a organization based on the provided individual ID, CR number, and Chamber of Commerce.
       requestBody:
         required: true
         content:
@@ -265,12 +264,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
 
-  /organization/{moiNumber}/management/{nationalId}/verification:
+  /organization/{moiNumber}/management/{individualId}/verification:
     post:
       tags:
         - Organization
       summary: Verify the relationship between an individual and an organization.
-      description: Verifies the relationship between an individual and an organization based on the provided national ID and MOI number.
+      description: Verifies the relationship between an individual and an organization based on the provided individual ID and MOI number.
       parameters:
         - name: moiNumber
           in: path
@@ -279,10 +278,10 @@ paths:
           schema:
             type: string
             minLength: 1
-        - name: nationalId
+        - name: individualId
           in: path
           required: true
-          description: Individual national or iqama Id.
+          description: Individual national/iqama Id.
           schema:
             type: string
             minLength: 1
@@ -415,19 +414,31 @@ paths:
 
 components:
   schemas:
+    SendOtpRequest:
+      type: object
+      required:
+        - individualId
+      properties:
+        individualId:
+          type: string
+          description: Individual's National ID number (Ahwal/Iqama).
+        ttl:
+          type: integer
+          description: Time-to-live for the OTP in seconds.
+
     IndividualVerificationRequest:
       type: object
       required:
-        - nationalId
+        - individualId
         - birthDate
         - otp
       properties:
-        nationalId:
+        individualId:
           type: string
           description: Individual's National ID number (Ahwal/Iqama).
         birthDate:
           type: string
-          description: Individual's birthdate. Use Hijri format (e.g., YYYY-MM-DD) if  (citizen), or Gregorian format(resident).
+          description: Individual's birthdate. Use Hijri format (e.g., YYYY-MM) if  (citizen), or Gregorian format(resident).
         otp:
           type: string
           description: One-Time Password received via SMS.
@@ -523,8 +534,7 @@ components:
         businessType:
           $ref: '#/components/schemas/OrganizationResponseBusinessType'
         fiscalYear:
-          type: string
-          description: Fiscal year of the organization (nullable)
+          $ref: '#/components/schemas/OrganizationResponseFiscalYear'
         status:
           $ref: '#/components/schemas/OrganizationResponseStatus'
         cancellation:
@@ -537,11 +547,33 @@ components:
         activities:
           $ref: '#/components/schemas/OrganizationResponseActivities'
 
+
     OrganizationResponseBusinessType:
       type: object
       properties:
         id:
           type: string
+        name:
+          type: string
+
+    OrganizationResponseFiscalYear:
+      type: object
+      properties:
+        month:
+          type: integer
+          format: int32
+        day:
+          type: integer
+          format: int32
+        calendarType:
+          $ref: '#/components/schemas/OrganizationResponseCalendarType'
+
+    OrganizationResponseCalendarType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
         name:
           type: string
 
@@ -604,13 +636,13 @@ components:
     DelegatedSignerVerificationRequest:
       type: object
       required:
-        - nationalId
+        - individualId
         - crNumber
         - chamberOfCommerceId
       properties:
-        nationalId:
+        individualId:
           type: string
-          description: Individual's national ID number.
+          description: Individual's national ID number(Ahwal/Iqama).
         crNumber:
           type: string
           description: Organization's commercial registration number.
@@ -683,24 +715,6 @@ components:
         organizationName:
           type: string
 
-    VerificationRequest:
-      type: object
-      required:
-        - nationalId
-        - birthdate
-        - otp
-      properties:
-        nationalId:
-          type: string
-          description: Individual's National ID number (Ahwal/Iqama).
-        birthdate:
-          type: string
-          format: date
-          description: Individual's birthdate (Hijri for citizens, Gregorian for residents).
-        otp:
-          type: string
-          description: One-Time Password received via SMS.
-
     ActiveCommerceChamberResponse:
       properties:
         id:
@@ -730,3 +744,30 @@ components:
           type: string
         code:
           type: string
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConstraintViolation'
+
+    Violation:
+      description: Violation in API request
+      discriminator:
+        propertyName: type
+        mapping:
+          ConstraintViolation: '#/components/schemas/ConstraintViolation'
+      properties:
+        type:
+          description: Violation type
+          type: string
+        message:
+          description: Violation message
+          type: string
+          
+    ConstraintViolation:
+      allOf:
+        - $ref: '#/components/schemas/Violation'
+        - type: object
+          properties:
+            property:
+              type: string
+              description: Property name
