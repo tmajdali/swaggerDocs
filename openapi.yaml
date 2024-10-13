@@ -281,7 +281,7 @@ paths:
         - name: individualId
           in: path
           required: true
-          description: Individual national/iqama Id.
+          description: Individual national/iqama Id as ref id returned by management Endpoint.
           schema:
             type: string
             minLength: 1
@@ -678,8 +678,9 @@ components:
         identity:
           type: object
           properties:
-            id:
+            refId:
               type: string
+              description: Ref id to be used for relationship verification
             type:
               type: string
         relation:
@@ -694,16 +695,16 @@ components:
     RelationshipVerificationRequest:
       type: object
       required:
-        - verifierId
+        - verifierRefId
         - verifierName
         - delegatorName
         - verificationRequestFormUrl
         - providerName
         - organizationName
       properties:
-        verifierId:
+        verifierRefId:
           type: string
-          description: manager or owner is national or iqama ID number.
+          description: manager or owner is national or iqama ID ref number.
         verifierName:
           type: string
         delegatorName:
