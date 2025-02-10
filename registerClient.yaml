@@ -211,9 +211,41 @@ components:
     Forbidden:
       type: object
       properties:
-        message:
+        errorCode:
           type: string
-          description: Error message when access is forbidden.
+          description: Unique error code.
+          example: "ZWL-403"
+        timestamp:
+          type: string
+          format: date-time
+          description: Time of the error occurrence.
+        serviceName:
+          type: string
+          description: Service reporting the error.
+          example: "Zawil"
+        httpStatus:
+          type: string
+          description: HTTP status description.
+          example: "FORBIDDEN"
+        httpStatusCode:
+          type: integer
+          description: HTTP status code.
+          example: 403
+        messages:
+          type: object
+          properties:
+            messageCode:
+              type: string
+              description: Error message identifier.
+              example: "SUBSCRIPTION_NOT_ALLOWED"
+            ar:
+              type: string
+              description: Error message in Arabic.
+              example: "المستخدم غير مسموح له بالاشتراك في هذه الخطة."
+            en:
+              type: string
+              description: Error message in English.
+              example: "The client is not allowed to subscribe to this plan."
 
     DuplicateSubscriptionError:
       type: object
