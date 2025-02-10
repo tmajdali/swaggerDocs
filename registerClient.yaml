@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: Client Registration API
+  description: API for registering a new client with Zawil services via Rabet Solutions.
+  version: 1.0.0
+
+servers:
+  - url: https://api.rabetsolutions.com
+    description: Production Server
+
+paths:
+  /clients:
+    post:
+      summary: Register a new client for Zawil services
+      description: Registers a client, validates their account details, and generates API credentials.
+      operationId: registerClient
+      tags:
+        - Client Registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientRegistrationRequest"
+      responses:
+        "201":
+          description: Client successfully registered.
+        "400":
+          description: Invalid request or missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Forbidden access.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forbidden"
+        "409":
+          description: Conflict - Duplicate subscription detected.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DuplicateSubscriptionError"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    ClientRegistrationRequest:
+      type: object
+      required:
+        - clientId
+        - subscriptionId
+        - plan
+        - account
+        - user
+        - credentials
+        - extraFields
+      properties:
+        clientId:
+          type: string
+          description: Unique identifier for the client in Rabet Solutions’ system.
+        subscriptionId:
+          type: string
+          description: Unique subscription identifier in Rabet Solutions.
+        plan:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: string
+              description: Plan ID of selected Zawil plan.
+            name:
+              type: string
+              description: Plan Name of selected Zawil plan.
+        account:
+          type: object
+          required:
+            - crNumber
+            - moiNumber
+            - vatNumber
+            - address
+            - name
+          properties:
+            crNumber:
+              type: string
+              description: Commercial Registration number of the client’s account.
+            moiNumber:
+              type: string
+              description: Ministry of Interior number of the client’s account.
+            vatNumber:
+              type: string
+              description: VAT Number of the account.
+            address:
+              $ref: "#/components/schemas/Address"
+            name:
+              type: object
+              properties:
+                ar:
+                  type: string
+                  description: Organization name in Arabic.
+                en:
+                  type: string
+                  description: Organization name in English.
+        user:
+          type: object
+          required:
+            - idNumber
+            - birthDate
+            - mobile
+            - email
+          properties:
+            idNumber:
+              type: string
+              description: User's identification number.
+            birthDate:
+              type: string
+              format: date
+              description: User's birth date.
+            mobile:
+              type: string
+              description: User's mobile phone number.
+            email:
+              type: string
+              format: email
+              description: User's email address.
+        credentials:
+          type: object
+          required:
+            - appId
+            - appKey
+          properties:
+            appId:
+              type: string
+              description: Generated application ID.
+            appKey:
+              type: string
+              description: Generated application key for API access.
+        extraFields:
+          type: object
+          description: Additional fields that may be required by the system.
+
+    Address:
+      type: object
+      required:
+        - street
+        - buildingNumber
+        - district
+        - city
+        - region
+        - postalCode
+        - country
+        - additionalNumber
+      properties:
+        street:
+          type: string
+          description: Street name (Arabic/English).
+        buildingNumber:
+          type: string
+          description: Building number (must not start with zero).
+        district:
+          type: string
+          description: District name (Arabic/English).
+        city:
+          type: integer
+          description: City name (Arabic/English).
+        region:
+          type: integer
+          description: Region name (Arabic/English).
+        postalCode:
+          type: string
+          description: Postal Code (must not start with zero).
+        country:
+          type: string
+          description: ISO country code (e.g., SA).
+        additionalNumber:
+          type: string
+          description: Additional number (must not start with zero).
+
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        timestamp:
+          type: string
+        serviceName:
+          type: string
+        httpStatus:
+          type: string
+        httpStatusCode:
+          type: integer
+        messages:
+          type: object
+          properties:
+            messageCode:
+              type: string
+            ar:
+              type: string
+            en:
+              type: string
+
+    Forbidden:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message when access is forbidden.
+
+    DuplicateSubscriptionError:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: Unique error code.
+          example: "ZWL-409"
+        timestamp:
+          type: string
+          format: date-time
+          description: Time of the error occurrence.
+        serviceName:
+          type: string
+          description: Service reporting the error.
+          example: "Zawil"
+        httpStatus:
+          type: string
+          description: HTTP status description.
+          example: "CONFLICT"
+        httpStatusCode:
+          type: integer
+          description: HTTP status code.
+          example: 409
+        messages:
+          type: object
+          properties:
+            messageCode:
+              type: string
+              description: Error message identifier.
+              example: "DUPLICATE_SUBSCRIPTION"
+            ar:
+              type: string
+              description: Error message in Arabic.
+              example: "المستخدم لديه بالفعل اشتراك في نفس الخطة."
+            en:
+              type: string
+              description: Error message in English.
+              example: "The client is already subscribed to the same plan."
