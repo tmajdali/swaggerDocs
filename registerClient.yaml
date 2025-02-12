@@ -136,14 +136,10 @@ components:
           type: object
           required:
             - appId
-            - appKey
           properties:
             appId:
               type: string
               description: Generated application ID.
-            appKey:
-              type: string
-              description: Generated application key for API access.
         extraFields:
           type: object
           description: Additional fields that may be required by the system.
