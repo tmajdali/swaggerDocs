@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Rabet Solutions API - Payment Notification
+  description: API to be used by Rabet Solutions to notify DSP of payment completion.
+  version: 1.0.0
+servers:
+  - url: https://api.rabetsolutions.com
+
+paths:
+  /api/payment-notification:
+    post:
+      summary: Payment Notification
+      description: Notifies DSP when a client completes payment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                invoiceNumber:
+                  type: string
+                paymentStatus:
+                  type: string
+                  enum: [Paid, Pending, Failed]
+                paymentAmount:
+                  type: number
+                  format: float
+                paymentDate:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          description: Payment notification received.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientMoiNumber:
+                    type: string
+                  invoiceNumber:
+                    type: string
+                  paymentStatus:
+                    type: string
+                  paymentAmount:
+                    type: number
+                    format: float
+                  paymentDate:
+                    type: string
+                    format: date-time
+                  subscriptionStates:
+                    type: string
+                  notificationId:
+                    type: string
+                  timeStamp:
+                    type: string
+                    format: date-time
+                  message:
+                    type: string
