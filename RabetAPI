@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: Rabet Solutions API - Eligibility & Registration
+  description: API to be used by Digital Sales Platform to check eligibility and register clients with TAMM.
+  version: 1.0.0
+servers:
+  - url: https://api.rabetsolutions.com
+
+paths:
+  /api/eligibility-check:
+    get:
+      summary: Eligibility Check with Main User Verification
+      description: Checks if a customer is eligible and identifies the main user status.
+      parameters:
+        - name: operatorCode
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Identifier of the system making the request.
+        - name: productCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: The product this request is associated with.
+        - name: operatorId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: clientMoiNumber
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: clientIpAddress
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Eligibility status response.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eligibilityStatus:
+                    type: string
+                    enum: [Eligible, Ineligible]
+                  ineligibilityReason:
+                    type: string
+                    nullable: true
+                  isMainUser:
+                    type: boolean
+                  mainUserDetails:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      moiNumber:
+                        type: string
+
+  /api/register-and-subscribe:
+    post:
+      summary: Client Registration and Subscription
+      description: Registers a client in TAMM and generates an invoice.
+      parameters:
+        - name: operatorCode
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Identifier of the system making the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productCode:
+                  type: string
+                  description: The product this request is associated with.
+                operatorId:
+                  type: number
+                  description: Unique identifier for the operator.
+                clientIpAddress:
+                  type: string
+                  description: Client's IP address.
+                clientInfo:
+                  type: object
+                  properties:
+                    clientMoiNumber:
+                      type: number
+                      description: MOI number of the client.
+                    clientTypeCode:
+                      type: integer
+                    clientType:
+                      type: integer
+                    arabicName:
+                      type: string
+                      maxLength: 250
+                    englishName:
+                      type: string
+                      maxLength: 250
+                    phoneNumber:
+                      type: string
+                      maxLength: 15
+                    email:
+                      type: string
+                      maxLength: 50
+                taxInvoiceInfo:
+                  type: object
+                  properties:
+                    vatNumber:
+                      type: string
+                      maxLength: 50
+                managerDetails:
+                  type: object
+                  properties:
+                    managerName:
+                      type: string
+                      maxLength: 250
+                    managerPhoneNumber:
+                      type: string
+                      maxLength: 15
+      responses:
+        '201':
+          description: Client registration successful.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  message:
+                    type: string
+                  requestTimeStamp:
+                    type: string
+                    format: date-time
+                  responseTimeStamp:
+                    type: string
+                    format: date-time
+                  clientMoiNumber:
+                    type: string
+                  invoiceNumber:
+                    type: string
+                  invoiceAmount:
+                    type: number
+                    format: float
