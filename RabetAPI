@@ -83,43 +83,14 @@ paths:
                 clientIpAddress:
                   type: string
                   description: Client's IP address.
-                clientInfo:
+                extraFields:
                   type: object
                   properties:
-                    clientMoiNumber:
-                      type: number
-                      description: MOI number of the client.
-                    clientTypeCode:
-                      type: integer
-                    clientType:
-                      type: integer
-                    arabicName:
+                    Check:
                       type: string
+                      enum: ["User Story"]
                       maxLength: 250
-                    englishName:
-                      type: string
-                      maxLength: 250
-                    phoneNumber:
-                      type: string
-                      maxLength: 15
-                    email:
-                      type: string
-                      maxLength: 50
-                taxInvoiceInfo:
-                  type: object
-                  properties:
-                    vatNumber:
-                      type: string
-                      maxLength: 50
-                managerDetails:
-                  type: object
-                  properties:
-                    managerName:
-                      type: string
-                      maxLength: 250
-                    managerPhoneNumber:
-                      type: string
-                      maxLength: 15
+
       responses:
         '201':
           description: Client registration successful.
