@@ -12,13 +12,13 @@ paths:
       summary: Eligibility Check with Main User Verification
       description: Checks if a customer is eligible and identifies the main user status.
       parameters:
-        - name: operatorCode
+        - name: sourceID
           in: header
           required: true
           schema:
             type: string
           description: Identifier of the system making the request.
-        - name: productCode
+        - name: destinationID
           in: query
           required: true
           schema:
@@ -47,28 +47,21 @@ paths:
               schema:
                 type: object
                 properties:
-                  eligibilityStatus:
+                  status:
+                    type: integer
+                    enum: [1102, 1101]
+                  msg:
                     type: string
-                    enum: [Eligible, Ineligible]
-                  ineligibilityReason:
-                    type: string
+                    enum: ["Dear client, you have to register to TAMM ...."]
                     nullable: true
-                  isMainUser:
-                    type: boolean
-                  mainUserDetails:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      moiNumber:
-                        type: string
+                  
 
   /api/register-and-subscribe:
     post:
       summary: Client Registration and Subscription
       description: Registers a client in TAMM and generates an invoice.
       parameters:
-        - name: operatorCode
+        - name: sourceID
           in: header
           required: true
           schema:
@@ -81,7 +74,7 @@ paths:
             schema:
               type: object
               properties:
-                productCode:
+                destinationID:
                   type: string
                   description: The product this request is associated with.
                 operatorId:
