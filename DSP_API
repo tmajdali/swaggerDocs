@@ -1,60 +1,128 @@
 openapi: 3.0.0
 info:
-  title: Rabet Solutions API - Payment Notification
-  description: API to be used by Rabet Solutions to notify DSP of payment completion.
+  title: Payment Notification API
+  description: API to notify Rabet Solutions when a client completes payment.
   version: 1.0.0
+
 servers:
   - url: https://api.rabetsolutions.com
+    description: Production Server
 
 paths:
   /api/payment-notification:
     post:
       summary: Payment Notification
-      description: Notifies DSP when a client completes payment.
+      description: Notifies Rabet Solutions when a client completes payment.
+      operationId: paymentNotification
+      tags:
+        - Payment
+      parameters:
+        - in: header
+          name: sourceID
+          schema:
+            type: string
+          required: true
+          description: Identifier for the source system sending the request.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                invoiceNumber:
-                  type: string
-                paymentStatus:
-                  type: string
-                  enum: [Paid, Pending, Failed]
-                paymentAmount:
-                  type: number
-                  format: float
-                paymentDate:
-                  type: string
-                  format: date-time
+              $ref: "#/components/schemas/PaymentNotificationRequest"
       responses:
-        '200':
-          description: Payment notification received.
+        "200":
+          description: Payment notification received successfully.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  clientMoiNumber:
-                    type: string
-                  invoiceNumber:
-                    type: string
-                  paymentStatus:
-                    type: string
-                  paymentAmount:
-                    type: number
-                    format: float
-                  paymentDate:
-                    type: string
-                    format: date-time
-                  subscriptionStates:
-                    type: string
-                  notificationId:
-                    type: string
-                  timeStamp:
-                    type: string
-                    format: date-time
-                  message:
-                    type: string
+                $ref: "#/components/schemas/PaymentNotificationResponse"
+        "400":
+          description: Invalid request or missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    PaymentNotificationRequest:
+      type: object
+      required:
+        - clientMoiNumber
+        - invoiceNumber
+        - paymentStatus
+        - paymentAmount
+        - paymentDate
+        - notificationId
+        - timeStamp
+        - destinationID
+      properties:
+        clientMoiNumber:
+          type: string
+          description: Ministry of Interior number of the client.
+        invoiceNumber:
+          type: string
+          description: Unique identifier for the invoice.
+        paymentStatus:
+          type: string
+          enum: [Paid, Failed, Pending]
+          description: Status of the payment.
+        paymentAmount:
+          type: number
+          format: float
+          description: The amount paid by the client.
+        paymentDate:
+          type: string
+          format: date-time
+          description: Date and time when the payment was made.
+        subscriptionStates:
+          type: string
+          description: Current state of the client's subscription.
+        notificationId:
+          type: string
+          description: Unique identifier for this payment notification.
+        timeStamp:
+          type: string
+          format: date-time
+          description: Timestamp of the notification.
+        destinationID:
+          type: string
+          description: Identifier for the destination system receiving the request.
+        message:
+          type: string
+          description: Additional information related to the payment notification.
+
+    PaymentNotificationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [Success, Failure]
+          description: Status of the notification processing.
+        message:
+          type: string
+          description: Detailed response message.
+        timeStamp:
+          type: string
+          format: date-time
+          description: Time of the response.
+
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          description: Error code identifier.
+        message:
+          type: string
+          description: Detailed error message.
+        timeStamp:
+          type: string
+          format: date-time
+          description: Timestamp of the error occurrence.
