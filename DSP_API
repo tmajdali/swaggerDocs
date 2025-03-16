@@ -8,7 +8,7 @@ servers:
 
 paths:
   /api/v1/eligibility-check:
-    post:
+    get:
       summary: Eligibility Check
       description: Verify whether a customer is eligible for product services.
       parameters:
@@ -40,23 +40,11 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                operatorId:
-                  type: string
-                clientMoiNumber:
-                  type: string
-                clientIpAddress:
-                  type: string
-              required:
-                - operatorId
-                - clientMoiNumber
-                - clientIpAddress
+        - in: query
+          name: clientMoiNumber
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Eligibility status response
