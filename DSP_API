@@ -362,7 +362,7 @@ paths:
         '403':
           description: Unauthorized access attempt
   /api/v1/lookup/regions:
-    post:
+    get:
       summary: Retrieve Region Lookups
       description: Retrieve the list of regions.
       parameters:
@@ -432,7 +432,7 @@ paths:
           description: Unauthorized access attempt
 
   /api/v1/lookup/cities:
-    post:
+    get:
       summary: Retrieve City Lookups
       description: Retrieve the list of cities.
       parameters:
@@ -507,7 +507,7 @@ paths:
           description: Unauthorized access attempt
 
   /api/v1/lookup/subscription-packages:
-    post:
+    get:
       summary: Retrieve Subscription Packages
       description: Retrieve the list of subscription packages.
       parameters:
@@ -577,7 +577,7 @@ paths:
           description: Unauthorized access attempt
 
   /api/v1/lookup/client-types:
-    post:
+    get:
       summary: Retrieve Client Types
       description: Retrieve the list of client types.
       parameters:
