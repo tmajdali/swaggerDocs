@@ -644,4 +644,90 @@ paths:
         '401':
           description: Authentication failure
         '403':
-          description: Unauthorized access attempt      
+          description: Unauthorized access attempt
+  /api/v1/subscription-invoice:
+    post:
+      summary: Get Subscription Invoice Information
+      description: Retrieve subscription invoice information for a given registered client.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                clientMoiNumber:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - operatorId
+                - clientMoiNumber
+                - clientIpAddress
+      responses:
+        '200':
+          description: Subscription invoice response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  sadadNumber:
+                    type: string
+                  paymentDate:
+                    type: string
+                  dueAmount:
+                    type: number
+                  status:
+                    type: string
+                    enum:
+                      - CREATED
+                      - PROCESSED
+                      - ERROR
+                      - VOID
+                      - DO_NOT_PROCESS
+                      - ISSUED
+                      - CANCELED
+                      - EXPIRED
+                      - PAID
+                      - PARTIAL_PAID
+                      - REFUNDED
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
