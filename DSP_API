@@ -1,128 +1,645 @@
 openapi: 3.0.0
 info:
-  title: Payment Notification API
-  description: API to notify Rabet Solutions when a client completes payment.
-  version: 1.0.0
-
+  title: Rabet Solutions Middleware API
+  version: "1.0"
+  description: Integration requirements between Rabet Solutions API and Digital Sales Platform (DSP) to facilitate Eligibility Checks, Client Registration, and Payment Notifications with Elm’s products.
 servers:
   - url: https://api.rabetsolutions.com
-    description: Production Server
 
 paths:
-  /api/payment-notification:
+  /api/v1/eligibility-check:
     post:
-      summary: Payment Notification
-      description: Notifies Rabet Solutions when a client completes payment.
-      operationId: paymentNotification
-      tags:
-        - Payment
+      summary: Eligibility Check
+      description: Verify whether a customer is eligible for product services.
       parameters:
         - in: header
-          name: sourceID
+          name: Content-Type
+          required: true
           schema:
             type: string
+            example: application/json
+        - in: header
+          name: app-id
           required: true
-          description: Identifier for the source system sending the request.
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PaymentNotificationRequest"
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                clientMoiNumber:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - operatorId
+                - clientMoiNumber
+                - clientIpAddress
       responses:
-        "200":
-          description: Payment notification received successfully.
+        '200':
+          description: Eligibility status response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaymentNotificationResponse"
-        "400":
-          description: Invalid request or missing required fields.
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  uiMsg:
+                    type: string
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
+
+  /api/v1/register-and-subscribe:
+    post:
+      summary: Client Registration and Subscription
+      description: Registers a client in the product and generates an invoice.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                formFields:
+                  type: object
+                  properties:
+                    clientInfo:
+                      type: object
+                      properties:
+                        clientMoiNumber:
+                          type: string
+                        clientTypeCode:
+                          type: integer
+                        cityCode:
+                          type: integer
+                        regionCode:
+                          type: integer
+                        clientFullEnName:
+                          type: string
+                        clientShortEnName:
+                          type: string
+                        clientFullArName:
+                          type: string
+                        clientShortArName:
+                          type: string
+                        vatNumber:
+                          type: string
+                        invoiceNameAr:
+                          type: string
+                        invoiceNameEn:
+                          type: string
+                    crInfo:
+                      type: object
+                      properties:
+                        clientCrNumber:
+                          type: string
+                        clientCrStatus:
+                          type: string
+                        clientCrIssueDate:
+                          type: string
+                        clientCrExpiryDate:
+                          type: string
+                        clientCrActivity:
+                          type: string
+                    authorizedPersonInfo:
+                      type: object
+                      properties:
+                        authorizedPersonId:
+                          type: string
+                        authorizedPersonName:
+                          type: string
+                        authorizedPersonNationality:
+                          type: string
+                        authorizedPersonMobile:
+                          type: string
+                        authorizedPersonEmail:
+                          type: string
+                        authorizedPersonRelationDescAr:
+                          type: string
+                        authorizedPersonRelationDescEn:
+                          type: string
+                        authorizedPersonRelationCode:
+                          type: integer
+                    relatedPersonInfo:
+                      type: object
+                      properties:
+                        relatedPersonId:
+                          type: string
+                        relatedPersonRelationDescAr:
+                          type: string
+                        relatedPersonRelationDescEn:
+                          type: string
+                        relatedPersonRelationCode:
+                          type: integer
+                    hqAdminInfo:
+                      type: object
+                      properties:
+                        hqAdminId:
+                          type: string
+                        hqAdminName:
+                          type: string
+                        hqAdminMobile:
+                          type: string
+                        hqAdminEmail:
+                          type: string
+                    managerInfo:
+                      type: object
+                      properties:
+                        managerName:
+                          type: string
+                        managerMobile:
+                          type: string
+                    contactInfo:
+                      type: object
+                      properties:
+                        contactName:
+                          type: string
+                        contactMobile:
+                          type: string
+                    notificationInfo:
+                      type: object
+                      properties:
+                        notificationMobile:
+                          type: string
+                        notificationEmail:
+                          type: string
+                    address:
+                      type: object
+                      properties:
+                        street:
+                          type: string
+                        buildingNumber:
+                          type: string
+                        additionalNumber:
+                          type: string
+                        district:
+                          type: string
+                        city:
+                          type: string
+                        postalCode:
+                          type: string
+                        country:
+                          type: string
+              required:
+                - operatorId
+                - formFields
+      responses:
+        '201':
+          description: Client registration successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-        "500":
-          description: Internal server error.
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                  message:
+                    type: string
+                  requestTimeStamp:
+                    type: string
+                  responseTimeStamp:
+                    type: string
+                  clientMoiNumber:
+                    type: string
+                  invoiceNumber:
+                    type: string
+                  invoiceAmount:
+                    type: number
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
+
+  /api/v1/payment-notification:
+    post:
+      summary: Payment Notification
+      description: Send a payment notification to Rabet Solutions.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clientMoiNumber:
+                  type: string
+                invoiceNumber:
+                  type: string
+                paymentStatus:
+                  type: string
+                paymentAmount:
+                  type: number
+                paymentDate:
+                  type: string
+                subscriptionStates:
+                  type: string
+                notificationId:
+                  type: string
+                timeStamp:
+                  type: string
+                destinationID:
+                  type: string
+                message:
+                  type: string
+              required:
+                - clientMoiNumber
+                - invoiceNumber
+                - paymentStatus
+                - paymentAmount
+                - paymentDate
+                - notificationId
+                - timeStamp
+                - destinationID
+      responses:
+        '200':
+          description: Payment notification received successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  message:
+                    type: string
+                  timeStamp:
+                    type: string
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
+  /api/v1/lookup/regions:
+    post:
+      summary: Retrieve Region Lookups
+      description: Retrieve the list of regions.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - operatorId
+                - clientIpAddress
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: integer
+                    nameAr:
+                      type: string
+                    nameEn:
+                      type: string
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
 
-components:
-  schemas:
-    PaymentNotificationRequest:
-      type: object
-      required:
-        - clientMoiNumber
-        - invoiceNumber
-        - paymentStatus
-        - paymentAmount
-        - paymentDate
-        - notificationId
-        - timeStamp
-        - destinationID
-      properties:
-        clientMoiNumber:
-          type: string
-          description: Ministry of Interior number of the client.
-        invoiceNumber:
-          type: string
-          description: Unique identifier for the invoice.
-        paymentStatus:
-          type: string
-          enum: [Paid, Failed, Pending]
-          description: Status of the payment.
-        paymentAmount:
-          type: number
-          format: float
-          description: The amount paid by the client.
-        paymentDate:
-          type: string
-          format: date-time
-          description: Date and time when the payment was made.
-        subscriptionStates:
-          type: string
-          description: Current state of the client's subscription.
-        notificationId:
-          type: string
-          description: Unique identifier for this payment notification.
-        timeStamp:
-          type: string
-          format: date-time
-          description: Timestamp of the notification.
-        destinationID:
-          type: string
-          description: Identifier for the destination system receiving the request.
-        message:
-          type: string
-          description: Additional information related to the payment notification.
+  /api/v1/lookup/cities:
+    post:
+      summary: Retrieve City Lookups
+      description: Retrieve the list of cities.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                regionCode:
+                  type: integer
+                operatorId:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - regionCode
+                - operatorId
+                - clientIpAddress
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    cityCode:
+                      type: integer
+                    nameAr:
+                      type: string
+                    nameEn:
+                      type: string
+                    regionCode:
+                      type: integer
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
 
-    PaymentNotificationResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          enum: [Success, Failure]
-          description: Status of the notification processing.
-        message:
-          type: string
-          description: Detailed response message.
-        timeStamp:
-          type: string
-          format: date-time
-          description: Time of the response.
+  /api/v1/lookup/subscription-packages:
+    post:
+      summary: Retrieve Subscription Packages
+      description: Retrieve the list of subscription packages.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - operatorId
+                - clientIpAddress
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: integer
+                    nameAr:
+                      type: string
+                    nameEn:
+                      type: string
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt
 
-    Error:
-      type: object
-      properties:
-        errorCode:
-          type: string
-          description: Error code identifier.
-        message:
-          type: string
-          description: Detailed error message.
-        timeStamp:
-          type: string
-          format: date-time
-          description: Timestamp of the error occurrence.
+  /api/v1/lookup/client-types:
+    post:
+      summary: Retrieve Client Types
+      description: Retrieve the list of client types.
+      parameters:
+        - in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+            example: application/json
+        - in: header
+          name: app-id
+          required: true
+          schema:
+            type: string
+            example: 851e4523
+        - in: header
+          name: app-key
+          required: true
+          schema:
+            type: string
+            example: D6596C46-80D1-45B5-BA01-1C5F80659D63
+        - in: header
+          name: sourceID
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: destinationID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operatorId:
+                  type: string
+                clientIpAddress:
+                  type: string
+              required:
+                - operatorId
+                - clientIpAddress
+      responses:
+        '200':
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: integer
+                    nameAr:
+                      type: string
+                    nameEn:
+                      type: string
+        '400':
+          description: Invalid request or missing required fields
+        '401':
+          description: Authentication failure
+        '403':
+          description: Unauthorized access attempt      
