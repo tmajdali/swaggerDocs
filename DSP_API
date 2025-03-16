@@ -646,7 +646,7 @@ paths:
         '403':
           description: Unauthorized access attempt
   /api/v1/subscription-invoice:
-    post:
+    get:
       summary: Get Subscription Invoice Information
       description: Retrieve subscription invoice information for a given registered client.
       parameters:
