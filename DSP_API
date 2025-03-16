@@ -118,6 +118,8 @@ paths:
               properties:
                 operatorId:
                   type: string
+                clientIpAddress:
+                  type: string
                 formFields:
                   type: object
                   properties:
