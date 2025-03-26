@@ -239,22 +239,24 @@ paths:
               schema:
                 type: object
                 properties:
-                  statusCode:
+                  subscriptionFees:
+                    type: number
+                    format: double
+        '400':
+          description: Invalid request or missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
                     type: integer
                   message:
                     type: string
-                  requestTimeStamp:
+                  referenceId:
                     type: string
-                  responseTimeStamp:
-                    type: string
-                  clientMoiNumber:
-                    type: string
-                  invoiceNumber:
-                    type: string
-                  invoiceAmount:
-                    type: number
-        '400':
-          description: Invalid request or missing required fields
+                  timeStamp:
+                    type: string    
         '401':
           description: Authentication failure
         '403':
