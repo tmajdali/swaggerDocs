@@ -264,6 +264,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDetails'
 
+  /decryption/IndividualId:
+    put:
+      tags:
+        - Organization
+      operationId: decryptIndividualId
+      summary: Decrypt individual id.
+      description: Decrypt individual id using provided encrypted id.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecryptedIndividualIdRequest'
+      responses:
+        200:
+          description: Decrypt individual id successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DecryptedIndividualIdResponse'
+        400:
+          description: Invalid individual ref ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+        500:
+          description: General error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetails'
+
   /organization/{moiNumber}/management/{individualId}/verification:
     post:
       tags:
@@ -281,7 +314,7 @@ paths:
         - name: individualId
           in: path
           required: true
-          description: Individual national/iqama Id.
+          description: Individual national/iqama Id as ref id returned by management Endpoint.
           schema:
             type: string
             minLength: 1
@@ -632,6 +665,14 @@ components:
           type: boolean
           description: Whether the ownership relationship is verified or not.
           example: true
+        relationName:
+          type: string
+          description: Relation name.
+          example: true
+        ownershipType:
+          type: string
+          description: Whether the ownership relationship is verified or not.
+          example: true
 
     DelegatedSignerVerificationRequest:
       type: object
@@ -678,8 +719,9 @@ components:
         identity:
           type: object
           properties:
-            id:
+            refId:
               type: string
+              description: Ref id to be used for relationship verification
             type:
               type: string
         relation:
@@ -694,16 +736,16 @@ components:
     RelationshipVerificationRequest:
       type: object
       required:
-        - verifierId
+        - verifierRefId
         - verifierName
         - delegatorName
         - verificationRequestFormUrl
         - providerName
         - organizationName
       properties:
-        verifierId:
+        verifierRefId:
           type: string
-          description: manager or owner is national or iqama ID number.
+          description: manager or owner is national or iqama ID ref number.
         verifierName:
           type: string
         delegatorName:
@@ -714,6 +756,12 @@ components:
           type: string
         organizationName:
           type: string
+        clientId:
+          type: string
+        clientAuthorization:
+          type: string
+        templateId:
+          type: string
 
     ActiveCommerceChamberResponse:
       properties:
@@ -723,6 +771,17 @@ components:
         nameAr:
           type: string
         nameEn:
+          type: string
+
+    DecryptedIndividualIdRequest:
+      type: object
+      properties:
+        individualRefId:
+          type: string
+
+    DecryptedIndividualIdResponse:
+      properties:
+        id:
           type: string
 
     ErrorDetails:
